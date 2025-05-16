@@ -66,8 +66,7 @@ def draw_slots_with_player(additional, player_img):
     total_slots = 15
     fig, ax = plt.subplots(figsize=(15, 4))  # 높이 늘림
 
-    ax.text(-1, 0.9, "장타 억제력", fontsize=16, fontweight='bold', verticalalignment='center')
-
+    # 선수 이미지 크기 조절
     zoom = 0.35
     if player_img:
         imagebox = OffsetImage(player_img, zoom=zoom)
@@ -76,15 +75,23 @@ def draw_slots_with_player(additional, player_img):
 
     rect_height = 1.8
 
+    # 파란색 4칸 (고정)
     for i in range(4):
         gradient_rect(ax, (i, 0), 1, rect_height, "#0033cc")
+    # 보라색 4칸 (고정)
     for i in range(4, 8):
         gradient_rect(ax, (i, 0), 1, rect_height, "#660099")
+    # 황금색 추가 칸
     for i in range(8, 8 + additional):
         gradient_rect(ax, (i, 0), 1, rect_height, "#FFD700")
+    # 빈 칸 흰색
     for i in range(8 + additional, total_slots):
         rect = patches.Rectangle((i, 0), 1, rect_height, facecolor='white', edgecolor='black', linewidth=1.5)
         ax.add_patch(rect)
+
+    # 추가 칸수가 7이고 전체 15칸일 때 'SR+' 텍스트 추가
+    if additional == 7:
+        ax.text(11.5, 1.0, "SR+", fontsize=26, fontweight='bold', color='#FFD700', verticalalignment='center')
 
     ax.set_xlim(-1.5, total_slots)
     ax.set_ylim(0, 3)
@@ -92,7 +99,7 @@ def draw_slots_with_player(additional, player_img):
     plt.tight_layout()
     return fig
 
-st.title("🎲 잠재력 시뮬레이터 + 페디 선수")
+st.title("각성 잠재 시뮬레이터")
 
 if "current_additional" not in st.session_state:
     st.session_state.current_additional = choose_slots(initial_probs)
