@@ -55,7 +55,6 @@ def draw_slots_with_player(additional, player_img):
     zoom = 0.3
     if player_img:
         imagebox = OffsetImage(player_img, zoom=zoom)
-        # 선수 이미지를 칸 중앙 위쪽에 위치시키기 (x축: 7.5 = 15칸의 중간, y축: 1.5 위쪽)
         ab = AnnotationBbox(imagebox, (7.5, 1.5), frameon=False, box_alignment=(0.5, 0))
         ax.add_artist(ab)
 
@@ -87,7 +86,7 @@ st.title("🎲 잠재력 시뮬레이터 + 페디 선수")
 if "current_additional" not in st.session_state:
     st.session_state.current_additional = choose_slots(initial_probs)
 
-player_img_url = "https://cpbv-community.com2us.com/image/2022-04-22-XaO1512wDw6VURt.png"
+player_img_url = "https://hive-fn.qpyou.cn/webdev/community_cpbv22/upload/20231212_161818_%ED%8E%98%EB%94%94.png"
 player_img = load_player_image(player_img_url)
 
 fig = draw_slots_with_player(st.session_state.current_additional, player_img)
