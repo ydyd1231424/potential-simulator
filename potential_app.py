@@ -6,8 +6,23 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from PIL import Image
 from io import BytesIO
 import urllib.request
+import matplotlib.font_manager as fm
 
-# 초기 확률
+def get_korean_font():
+    candidates = ['Malgun Gothic', '맑은 고딕', 'NanumGothic', '나눔고딕', 'AppleGothic', 'Apple SD Gothic Neo']
+    font_list = fm.findSystemFonts(fontpaths=None, fontext='ttf')
+    font_names = [fm.FontProperties(fname=fp).get_name() for fp in font_list]
+    for c in candidates:
+        if c in font_names:
+            return c
+    return None
+
+korean_font = get_korean_font()
+if korean_font:
+    plt.rcParams['font.family'] = korean_font
+else:
+    print("한글 폰트를 찾지 못했습니다. 한글이 깨질 수 있습니다.")
+
 initial_probs = {
     1: 0.20,
     2: 0.27,
@@ -51,37 +66,28 @@ def draw_slots_with_player(additional, player_img):
     total_slots = 15
     fig, ax = plt.subplots(figsize=(15, 4))  # 높이 늘림
 
-    # 왼쪽 텍스트 추가 (x=-1, y=0.9 위치)
     ax.text(-1, 0.9, "장타 억제력", fontsize=16, fontweight='bold', verticalalignment='center')
 
-    # 선수 이미지 크기 조절
     zoom = 0.35
     if player_img:
         imagebox = OffsetImage(player_img, zoom=zoom)
         ab = AnnotationBbox(imagebox, (7.5, 2.1), frameon=False, box_alignment=(0.5, 0))
         ax.add_artist(ab)
 
-    rect_height = 1.8  # 칸 높이 키움
+    rect_height = 1.8
 
-    # 파란색 4칸 (고정)
     for i in range(4):
         gradient_rect(ax, (i, 0), 1, rect_height, "#0033cc")
-
-    # 보라색 4칸 (고정)
     for i in range(4, 8):
         gradient_rect(ax, (i, 0), 1, rect_height, "#660099")
-
-    # 황금색 추가 칸
     for i in range(8, 8 + additional):
         gradient_rect(ax, (i, 0), 1, rect_height, "#FFD700")
-
-    # 빈 칸 흰색
     for i in range(8 + additional, total_slots):
         rect = patches.Rectangle((i, 0), 1, rect_height, facecolor='white', edgecolor='black', linewidth=1.5)
         ax.add_patch(rect)
 
     ax.set_xlim(-1.5, total_slots)
-    ax.set_ylim(0, 3)  # 세로 공간 충분히
+    ax.set_ylim(0, 3)
     ax.axis('off')
     plt.tight_layout()
     return fig
