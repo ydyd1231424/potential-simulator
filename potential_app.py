@@ -3,11 +3,11 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-from matplotlib.colors import LinearSegmentedColormap
-import urllib.request
 from PIL import Image
 from io import BytesIO
+import urllib.request
 
+# 초기 확률
 initial_probs = {
     1: 0.20,
     2: 0.27,
@@ -49,34 +49,39 @@ def load_player_image(url):
 
 def draw_slots_with_player(additional, player_img):
     total_slots = 15
-    fig, ax = plt.subplots(figsize=(15, 3))  # 세로 공간 여유
+    fig, ax = plt.subplots(figsize=(15, 4))  # 높이 늘림
+
+    # 왼쪽 텍스트 추가 (x=-1, y=0.9 위치)
+    ax.text(-1, 0.9, "장타 억제력", fontsize=16, fontweight='bold', verticalalignment='center')
 
     # 선수 이미지 크기 조절
-    zoom = 0.3
+    zoom = 0.35
     if player_img:
         imagebox = OffsetImage(player_img, zoom=zoom)
-        ab = AnnotationBbox(imagebox, (7.5, 1.5), frameon=False, box_alignment=(0.5, 0))
+        ab = AnnotationBbox(imagebox, (7.5, 2.1), frameon=False, box_alignment=(0.5, 0))
         ax.add_artist(ab)
 
-    # 파란색 4칸
-    for i in range(4):
-        gradient_rect(ax, (i, 0), 1, 1, "#0033cc")
+    rect_height = 1.8  # 칸 높이 키움
 
-    # 보라색 4칸
+    # 파란색 4칸 (고정)
+    for i in range(4):
+        gradient_rect(ax, (i, 0), 1, rect_height, "#0033cc")
+
+    # 보라색 4칸 (고정)
     for i in range(4, 8):
-        gradient_rect(ax, (i, 0), 1, 1, "#660099")
+        gradient_rect(ax, (i, 0), 1, rect_height, "#660099")
 
     # 황금색 추가 칸
     for i in range(8, 8 + additional):
-        gradient_rect(ax, (i, 0), 1, 1, "#FFD700")
+        gradient_rect(ax, (i, 0), 1, rect_height, "#FFD700")
 
     # 빈 칸 흰색
     for i in range(8 + additional, total_slots):
-        rect = patches.Rectangle((i, 0), 1, 1, facecolor='white', edgecolor='black', linewidth=1.5)
+        rect = patches.Rectangle((i, 0), 1, rect_height, facecolor='white', edgecolor='black', linewidth=1.5)
         ax.add_patch(rect)
 
-    ax.set_xlim(0, total_slots)
-    ax.set_ylim(0, 2)  # 세로 높이 늘림 (이미지 공간)
+    ax.set_xlim(-1.5, total_slots)
+    ax.set_ylim(0, 3)  # 세로 공간 충분히
     ax.axis('off')
     plt.tight_layout()
     return fig
